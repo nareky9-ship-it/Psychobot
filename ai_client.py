@@ -3,7 +3,7 @@
 """
 
 from openai import OpenAI
-from config import OPENAI_API_KEY, OPENAI_MODEL, OPENAI_TTS_MODEL, OPENAI_TTS_VOICE
+from config import OPENAI_API_KEY, OPENAI_MODEL, OPENAI_TTS_MODEL, OPENAI_TTS_VOICE, OPENAI_IMAGE_MODEL
 
 _client = OpenAI(api_key=OPENAI_API_KEY)
 
@@ -33,3 +33,23 @@ def get_ai_speech(text: str) -> bytes:
         input=text,
     )
     return response.content
+
+
+def generate_image(prompt: str) -> bytes:
+    """
+    Генерирует изображение через OpenAI Images API (DALL-E) по
+    текстовому описанию и возвращает готовые байты PNG-картинки.
+    Может выбросить исключение при сетевой/API ошибке - обрабатывается вызывающим кодом.
+    """
+    import base64
+
+    response = _client.images.generate(
+        model=OPENAI_IMAGE_MODEL,
+        prompt=prompt,
+        size="1024x1024",
+        quality="standard",
+        response_format="b64_json",
+        n=1,
+    )
+    b64_data = response.data[0].b64_json
+    return base64.b64decode(b64_data)
