@@ -24,7 +24,10 @@ from flask import Flask
 config.validate_config()
 db.init_db()
 
-TOKEN = os.getenv("TELEGRAM_BOT_TOKENL")
+TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+
+bot = telebot.TeleBot(TOKEN)
+
 
 app = Flask(__name__)
 
@@ -310,6 +313,6 @@ if __name__ == "__main__":
 
     flask_thread = threading.Thread(target=run_flask)
     flask_thread.start()
-    
+
     print("Bot is starting...")
     bot.infinity_polling()
